@@ -83,6 +83,7 @@ func (e *EtcdStore) Set(key string, value []byte, ttl time.Duration) error {
 	return nil
 }
 
+// Delete removes the specified key. Set recurse to true to delete recursively
 func (e *EtcdStore) Delete(key string, recurse bool) error {
 	e.Lock()
 	defer e.Unlock()

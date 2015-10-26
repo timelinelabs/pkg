@@ -63,6 +63,7 @@ func (r *memStoreReader) Read(p []byte) (int, error) {
 	return r.reader.Read(p)
 }
 
+// Delete removes the specified key. Set recurse to true to delete recursively
 func (m *MemStore) Delete(key string, recurse bool) error {
 	if !recurse {
 		delete(m.store, key)
