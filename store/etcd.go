@@ -69,7 +69,6 @@ func (e *EtcdStore) GetMultiMap(prefix string) (map[string]io.Reader, error) {
 // Set will set a single Etcd key to value with a ttl.  If the ttl is zero then
 // no ttl will be set.  Ttls in etcd are in seconds and must be at least 1
 func (e *EtcdStore) Set(key string, value []byte, ttl time.Duration) error {
-	// var etcdTTL = uint64(ttl.Seconds())
 	e.Lock()
 	defer e.Unlock()
 	c, q := context.WithTimeout(context.Background(), e.Timeout)
