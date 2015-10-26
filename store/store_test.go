@@ -134,16 +134,6 @@ func testKeys(t *testing.T, store Store) {
 }
 
 func deleteKeys(s Store, key string) {
-	// es, ok := s.(*EtcdStore)
-	// if ok {
-	// 	c, q := context.WithTimeout(context.Background(), es.Timeout)
-	// 	defer q()
-	// 	es.KeysAPI.Delete(c, key, &client.DeleteOptions{Recursive: true})
-	// }
-	// ms, ok := s.(*MemStore)
-	// if ok {
-	// 	ms.store = make(map[string]string)
-	// }
 	s.Delete(key, true)
 }
 
