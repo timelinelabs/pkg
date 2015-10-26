@@ -83,6 +83,16 @@ func (e *EtcdStore) Set(key string, value []byte, ttl time.Duration) error {
 	return nil
 }
 
+func (e *EtcdStore) Delete(key string, recurse bool) error {
+	e.Lock()
+	defer e.Unlock()
+	c, q := context.WithTimeout(context.Background(), e.Timeout)
+	defer q()
+
+	_, er := e.KeysAPI.Delete(c, key, &client.DeleteOptions{Recursive: recurse})
+	return er
+}
+
 // Keys returns all keys prefixed with string as a slice of strings.
 // Internally, this will recursively get all Etcd keys from a directory.
 func (e *EtcdStore) Keys(prefix string) ([]string, error) {
