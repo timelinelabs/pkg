@@ -11,6 +11,7 @@ import (
 	"github.com/coreos/etcd/client"
 )
 
+// EnableEtcdDebug turns on cURL debug logging for the etcd client
 func EnableEtcdDebug() {
 	client.EnablecURLDebug()
 }
