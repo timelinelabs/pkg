@@ -13,7 +13,10 @@ func init() {
 }
 
 func TestEtcdBackend(t *testing.T) {
-	s := NewEtcdStore([]string{"http://127.0.0.1:2379"})
+	s, er := NewEtcdStore([]string{"bad:/url"}, 5*time.Second)
+	assert.Error(t, err, "EtcdStore")
+	s, er = NewEtcdStore([]string{"http://127.0.0.1:2379"}, 2*time.Second)
+	assert.NoError(t, er, "EtcdStore")
 	assert.Implements(t, (*Store)(nil), new(EtcdStore), "EtcdStore")
 	testImplementation(t, s)
 }

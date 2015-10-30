@@ -3,12 +3,13 @@ package store
 import (
 	"strconv"
 	"testing"
+	"time"
 )
 
 var result []string
 
 func BenchmarkEtcdStore(b *testing.B) {
-	s := NewEtcdStore([]string{"http://127.0.0.1:2379"})
+	s, _ := NewEtcdStore([]string{"http://127.0.0.1:2379"}, 5*time.Second)
 	benchmarkStore(b, s)
 }
 
