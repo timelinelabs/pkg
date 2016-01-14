@@ -70,40 +70,29 @@ func (e *EtcdStore) GetMultiMap(prefix string) (map[string]io.Reader, error) {
 // Set will set a single Etcd key to value with a ttl.  If the ttl is zero then
 // no ttl will be set.  Ttls in etcd are in seconds and must be at least 1
 func (e *EtcdStore) Set(key string, value []byte, ttl time.Duration) error {
-	e.Lock()
-	defer e.Unlock()
 	c, q := context.WithTimeout(context.Background(), e.Timeout)
 	defer q()
 
 	o := &client.SetOptions{TTL: ttl}
-	if _, err := e.KeysAPI.Set(c, key, string(value[:]), o); err != nil {
-		return err
-	}
-
-	return nil
+	return set(e, c, o, key, string(value[:]))
 }
 
 // Mkdir will create a directory with the specified path and ttl
 func (e *EtcdStore) Mkdir(path string, ttl time.Duration) error {
-	e.Lock()
-	defer e.Unlock()
 	c, q := context.WithTimeout(context.Background(), e.Timeout)
 	defer q()
 
 	o := &client.SetOptions{Dir: true, TTL: ttl}
-	_, er := e.KeysAPI.Set(c, path, "", o)
-	return er
+	return set(e, c, o, path, "")
 }
 
 // Delete removes the specified key. Set recurse to true to delete recursively
 func (e *EtcdStore) Delete(key string, recurse bool) error {
-	e.Lock()
-	defer e.Unlock()
 	c, q := context.WithTimeout(context.Background(), e.Timeout)
 	defer q()
 
-	_, er := e.KeysAPI.Delete(c, key, &client.DeleteOptions{Recursive: recurse})
-	return er
+	o := &client.DeleteOptions{Recursive: recurse}
+	return del(e, c, o, key)
 }
 
 // Keys returns all keys prefixed with string as a slice of strings.
@@ -143,6 +132,20 @@ func (r *etcdStoreReader) Read(p []byte) (int, error) {
 		r.reader = r.extractFunc(res.Node)
 	}
 	return r.reader.Read(p)
+}
+
+func del(s *EtcdStore, c context.Context, o *client.DeleteOptions, k string) (e error) {
+	s.Lock()
+	defer s.Unlock()
+	_, e = s.KeysAPI.Delete(c, k, o)
+	return
+}
+
+func set(s *EtcdStore, c context.Context, o *client.SetOptions, k, v string) (e error) {
+	s.Lock()
+	defer s.Unlock()
+	_, e = s.KeysAPI.Set(c, k, v, o)
+	return
 }
 
 func get(store *EtcdStore, key string, recurse bool) (res *client.Response, err error) {
