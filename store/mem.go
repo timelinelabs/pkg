@@ -132,6 +132,11 @@ func (m *MemStore) Set(key string, value []byte, ttl time.Duration) error {
 	return nil
 }
 
+// Mkdir simply calls Set with an empty value
+func (m *MemStore) Mkdir(path string, ttl time.Duration) error {
+	return m.Set(path, []byte(""), ttl)
+}
+
 // Keys returns all keys in the internal map that are prefixed with prefix
 func (m *MemStore) Keys(prefix string) ([]string, error) {
 	m.mutex.Lock()

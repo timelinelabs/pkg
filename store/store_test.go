@@ -41,6 +41,7 @@ func testImplementation(t *testing.T, s Store) {
 	testGetMulti(t, s)
 	testGetMultiMap(t, s)
 	testSet(t, s)
+	testMkdir(t, s)
 	testKeys(t, s)
 	testEmptyKeys(t, s)
 }
@@ -108,6 +109,13 @@ func testSet(t *testing.T, store Store) {
 	expected := value
 	actual := streamToString(store.Get("/howdy"))
 	assert.Equal(t, expected, actual)
+}
+
+func testMkdir(t *testing.T, store Store) {
+	deleteKeys(store, "/greetings")
+	assert.NoError(t, store.Mkdir("/greetings", 0))
+	assert.Equal(t, "", streamToString(store.Get("/greetings")))
+	deleteKeys(store, "/greetings")
 }
 
 func testEmptyKeys(t *testing.T, store Store) {
