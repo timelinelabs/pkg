@@ -32,6 +32,8 @@ type Store interface {
 	// then the value will never timeout. The returned error will be nil on
 	// success or come from the underlying implementation.
 	Set(key string, value []byte, ttl time.Duration) error
+	// Mkdir creates a directory or bucket with the specified path and ttl
+	Mkdir(path string, ttl time.Duration) error
 	// Keys returns all keys prefixed by prefix. error returned is specific to
 	// underlying store implementation.
 	Keys(prefix string) ([]string, error)

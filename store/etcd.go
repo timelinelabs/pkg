@@ -83,6 +83,18 @@ func (e *EtcdStore) Set(key string, value []byte, ttl time.Duration) error {
 	return nil
 }
 
+// Mkdir will create a directory with the specified path and ttl
+func (e *EtcdStore) Mkdir(path string, ttl time.Duration) error {
+	e.Lock()
+	defer e.Unlock()
+	c, q := context.WithTimeout(context.Background(), e.Timeout)
+	defer q()
+
+	o := &client.SetOptions{Dir: true, TTL: ttl}
+	_, er := e.KeysAPI.Set(c, path, "", o)
+	return er
+}
+
 // Delete removes the specified key. Set recurse to true to delete recursively
 func (e *EtcdStore) Delete(key string, recurse bool) error {
 	e.Lock()
