@@ -9,13 +9,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	timeout = time.Duration(1 * 1000000000)
+)
+
 func init() {
 }
 
 func TestEtcdBackend(t *testing.T) {
-	s, er := NewEtcdStore([]string{"bad:/url"}, 5*time.Second)
-	assert.Error(t, err, "EtcdStore")
-	s, er = NewEtcdStore([]string{"http://127.0.0.1:2379"}, 2*time.Second)
+	// This won't work - it only returns error on use not instantiation
+	//s, er := NewEtcdStore([]string{"bad:/url"}, 5*time.Second)
+	//assert.Error(t, er, "EtcdStore")
+	s, er := NewEtcdStore([]string{"http://127.0.0.1:2379"}, 2*time.Second)
 	assert.NoError(t, er, "EtcdStore")
 	assert.Implements(t, (*Store)(nil), new(EtcdStore), "EtcdStore")
 	testImplementation(t, s)
@@ -23,8 +28,10 @@ func TestEtcdBackend(t *testing.T) {
 
 func TestSetTTL(t *testing.T) {
 
+	etcd, _ := NewEtcdStore([]string{"http://127.0.0.1:2379"}, timeout)
+
 	stores := map[string]Store{
-		"etcd": NewEtcdStore([]string{"http://127.0.0.1:2379"}),
+		"etcd": etcd,
 		"mem":  NewMemStore(),
 	}
 
